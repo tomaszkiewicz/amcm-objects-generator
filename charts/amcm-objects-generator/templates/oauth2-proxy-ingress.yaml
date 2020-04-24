@@ -1,0 +1,32 @@
+{{- range $ingress := .Values.oauth2ProxyIngresses -}}
+apiVersion: networking.k8s.io/v1beta1
+kind: Ingress
+metadata:
+  name: {{ $ingress.name }}-oauth2-proxy
+  namespace: {{ $ingress.namespace }}
+  annotations:
+    kubernetes.io/ingress.class: nginx-public
+spec:
+  rules:
+  - host: {{ $ingress.host }}
+    http:
+      paths:
+      - backend:
+          serviceName: {{ $ingress.name }}-oauth2-proxy
+          servicePort: 4180
+        path: /oauth2
+  tls:
+  - hosts:
+    - {{ $ingress.host }}
+    secretName: {{ $ingress.secretName | default (printf "%s-tls" $ingress.name) }}
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: {{ $ingress.name }}-oauth2-proxy
+  namespace: {{ $ingress.namespace }}
+spec:
+  type: ExternalName
+  externalName: oauth2-proxy.oauth2-proxy
+---
+{{- end }}
