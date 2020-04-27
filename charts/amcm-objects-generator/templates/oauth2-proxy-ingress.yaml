@@ -13,7 +13,7 @@ spec:
       paths:
       - backend:
           serviceName: {{ $ingress.name }}-oauth2-proxy
-          servicePort: 4180
+          servicePort: 80
         path: /oauth2
   tls:
   - hosts:
